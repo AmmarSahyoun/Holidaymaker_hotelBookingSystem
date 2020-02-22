@@ -8,6 +8,7 @@ public class Program {
     private ArrayList<Hotel> hotels = new ArrayList<>();
     private ArrayList<Rooms> rooms = new ArrayList<>();
     private ArrayList<Guest> guests = new ArrayList<>();
+    private ArrayList<Rooms> searchResult = new ArrayList<>();
     public int choice;
     private Connection conn = null;
     private PreparedStatement statement;
@@ -48,7 +49,8 @@ public class Program {
                 registerNewCustomer();
             }
             if (choice == 2) {
-                searchForRoom();
+
+                searchForRoom(Rooms room);
             }
             if (choice == 3) {
 
@@ -91,13 +93,76 @@ public class Program {
         }
 
     }
-    public void searchForRoom(){
+
+    public void searchForRoom(Date checkIn, Date checkOut, boolean pool, boolean restaurant, boolean childrenActivities, boolean entertainment) {
+        String sqlStat = "select * from rooms inner join hotel inner join facility inner join review inner join  room_type  where 1 = 1";
+
+        if (checkIn != null) {  // date null?
+            sqlStat = sqlStat + "checkIn = 1";
+        }
+        if (checkOut != null) {
+            sqlStat = sqlStat + "checkOut = 1";
+        }
+        if (pool != Boolean.parseBoolean(null)) {
+            sqlStat = sqlStat + "pool = 1";
+        }
+        if (restaurant != Boolean.parseBoolean(null)) {
+            sqlStat = sqlStat + "restaurant = 1";
+        }
+        if (childrenActivities != Boolean.parseBoolean(null)) {
+            sqlStat = sqlStat + "childrenActivities = 1";
+        }
+        if (entertainment != Boolean.parseBoolean(null)) {
+            sqlStat = sqlStat + "entertainment = 1";
+        }
         System.out.println("Enter check in date(yyyy-mm-dd):");
-        String checkIn = scn.nextLine();
+        checkIn = Date.valueOf(scn.nextLine());
         System.out.println("Enter check out date(yyyy-mm-dd):");
-        String checkOut = scn.nextLine();
+        checkOut = Date.valueOf(scn.nextLine());
+        System.out.println("choose your hotel facilities:");
+        System.out.println("[1] with pool  [0] without pool");
+        pool = Boolean.parseBoolean(scn.nextLine());
+        System.out.println("[1] with restaurant  [0] without restaurant");
+        restaurant = Boolean.parseBoolean(scn.nextLine());
+        System.out.println("[1] with children activities  [0] without children activities");
+        childrenActivities = Boolean.parseBoolean(scn.nextLine());
+        System.out.println("[1] with entertainment  [0] without entertainment");
+        entertainment = Boolean.parseBoolean(scn.nextLine());
+
+        try {
+            statement = conn.prepareStatement(sqlStat);
+            resultSet = statement.executeQuery();
+        } catch (
+                Exception e) {
+
+            e.printStackTrace();
+        }
+        try {
+            while (resultSet.next()) {
+                String row = "id: " + resultSet.getString("id")
+                        + ", checkIn: " + resultSet.getString("checkIn")
+                        + ", checkOut: " + resultSet.getString("checkOut")
+                        + ", pool: " + resultSet.getString("pool")
+                        + ", restaurant: " + resultSet.getString("restaurant")
+                        + ", childrenActivities: " + resultSet.getString("childrenActivities")
+                        + ", entertainment: " + resultSet.getString("entertainment")
+
+                        + ".";
+                System.out.println(row);
+            }
+        } catch (
+                Exception ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("customer not registered!");
+
+        Rooms rooms = new Rooms();
+        searchResult.add(rooms);
 
     }
+
+
+
 
 
     /*
@@ -116,34 +181,36 @@ public class Program {
 
      */
 
-    public void searchForCustomer() {
+            public void searchForCustomer () {
 
-        System.out.println("Enter customer's full name:");
-        String cusName = scn.nextLine();
-        try {
-            statement = conn.prepareStatement("select * from guest where guestName like ?");
-            statement.setString(1, cusName);
-            resultSet = statement.executeQuery();
-        } catch (
-                Exception e) {
+                System.out.println("Enter customer's full name:");
+                String cusName = scn.nextLine();
+                try {
+                    statement = conn.prepareStatement("select * from guest where guestName like ?");
+                    statement.setString(1, cusName);
+                    resultSet = statement.executeQuery();
+                } catch (
+                        Exception e) {
 
-            e.printStackTrace();
-        }
-        try {
-            while (resultSet.next()) {
-                String row = "id: " + resultSet.getString("id")
-                        + ", guest name: " + resultSet.getString("guestName")
-                        + ", guestAddress: " + resultSet.getString("guestAddress")
-                        + ", guestEmail: " + resultSet.getString("guestEmail")
-                        + ", guestMobile: " + resultSet.getString("guestMobile") + ".";
-                System.out.println(row);
+                    e.printStackTrace();
+                }
+                try {
+                    while (resultSet.next()) {
+                        String row = "id: " + resultSet.getString("id")
+                                + ", guest name: " + resultSet.getString("guestName")
+                                + ", guestAddress: " + resultSet.getString("guestAddress")
+                                + ", guestEmail: " + resultSet.getString("guestEmail")
+                                + ", guestMobile: " + resultSet.getString("guestMobile") + ".";
+                        System.out.println(row);
+                    }
+                } catch (
+                        Exception ex) {
+                    ex.printStackTrace();
+                }
+                System.out.println("customer not registered!");
             }
-        } catch (
-                Exception ex) {
-            ex.printStackTrace();
+
         }
-        System.out.println("customer not registered!");
+
     }
-
 }
-
