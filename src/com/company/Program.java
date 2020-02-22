@@ -1,9 +1,13 @@
 package com.company;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Program {
+    private ArrayList<Hotel> hotels = new ArrayList<>();
+    private ArrayList<Rooms> rooms = new ArrayList<>();
+    private ArrayList<Guest> guests = new ArrayList<>();
     public int choice;
     private Connection conn = null;
     private PreparedStatement statement;
@@ -19,10 +23,9 @@ public class Program {
             System.out.println();
             System.out.println("    .:Welcome Admin to the Holidaymaker:.");
             System.out.println("[1] register a new customer ");
-            System.out.println("[2] search for a customer");
+            System.out.println("[2] search for available room");
             System.out.println("[3] change a room booking");
-            System.out.println("[4] show all customers");
-            System.out.println("[5] Show all bookings");
+            System.out.println("[4] cancel a room booking");
             System.out.println("[0] Exit");
 
             try {
@@ -45,17 +48,15 @@ public class Program {
                 registerNewCustomer();
             }
             if (choice == 2) {
-                searchForCustomer();
+                searchForRoom();
             }
             if (choice == 3) {
 
             }
             if (choice == 4) {
-                showAllCustomers();
-            }
-            if (choice == 5) {
 
             }
+
             if (choice == 0) {
                 break;
             }
@@ -80,7 +81,7 @@ public class Program {
             statement.setString(3, cusEmail);
             statement.setString(4, cusMobile);
 
-             int i = statement.executeUpdate();
+            int i = statement.executeUpdate();
             if (i != 0) {
                 System.out.println("Registration SUCCESS");
             } else System.out.println("Something were wrong!");
@@ -89,26 +90,31 @@ public class Program {
 
         }
 
+    }
+    public void searchForRoom(){
+        System.out.println("Enter check in date(yyyy-mm-dd):");
+        String checkIn = scn.nextLine();
+        System.out.println("Enter check out date(yyyy-mm-dd):");
+        String checkOut = scn.nextLine();
 
     }
 
-    public void showAllCustomers() {
 
-/*
-        try {
-            String guestName = null;
-            statement = conn.prepareStatement("select guestName from guest like ?");
-            statement.setString(1, "*");
-            resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                String row = "id: " + resultSet.getString("id")
-                        + ", guestName: " + resultSet.getString("guestName");
-                System.out.println(row);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }*/
-    }
+    /*
+
+           1- Register Guest
+
+           2- Search For available room(s)
+                2.a show available room (Array<Room>)
+                2.b Let the Customer select any room Info
+                2.c Select a room from the Array to Book
+                2.d Book the selected room
+
+           3- booking
+
+           4-active booking
+
+     */
 
     public void searchForCustomer() {
 
