@@ -1,12 +1,19 @@
 package com.company;
 
-import java.util.ArrayList;
-
 public class Guest {
+    private int id;
     private String guestName;
     private String address;
     private String email;
     private String mobile;
+
+    public Guest(int id, String guestName, String address, String email, String mobile) {
+        this.id = id;
+        this.guestName = guestName;
+        this.address = address;
+        this.email = email;
+        this.mobile = mobile;
+    }
 
     public void setGuestName(String guestName) {
         this.guestName = guestName;
@@ -40,14 +47,13 @@ public class Guest {
         return mobile;
     }
 
-    private ArrayList<Booking> bookings = new ArrayList<>();
 
-    public Guest(String guestName, String address, String email, String mobile, ArrayList<Booking> bookings) {
-        this.guestName = guestName;
-        this.address = address;
-        this.email = email;
-        this.mobile = mobile;
-        this.bookings = bookings;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 

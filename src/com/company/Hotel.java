@@ -1,27 +1,28 @@
 package com.company;
 
 public class Hotel {
-
-    private Review review;
+    private int id ;
     private String hotelName;
-    private Facility facility;
     private String city;
     private String distance;
     private double halfBoardPrice;
     private double fullBoardPrice;
     private double extraBedPrice;
+    private Facility facility;
+    private Review review;
 
-    public Hotel(int reviewID, int reviewStarts, int facilityID, boolean pool, boolean restaurant, boolean childrenActivities,
+    public Hotel(int id, int reviewID, int reviewStarts, int facilityID, boolean pool, boolean restaurant, boolean childrenActivities,
                  boolean entertainment, String hotelName, String city, String distance, double halfBoardPrice,
                  double fullBoardPrice, double extraBedPrice) {
-        this.review = new Review(reviewID, reviewStarts);
-        this.facility = new Facility(facilityID, pool, restaurant, childrenActivities, entertainment);
+        this.id = id ;
         this.hotelName = hotelName;
         this.city = city;
         this.distance = distance;
         this.halfBoardPrice = halfBoardPrice;
         this.fullBoardPrice = fullBoardPrice;
         this.extraBedPrice = extraBedPrice;
+        this.review = new Review(reviewID, reviewStarts);
+        this.facility = new Facility(facilityID, pool, restaurant, childrenActivities, entertainment);
     }
 
     public void setReview(Review review) {
@@ -88,5 +89,12 @@ public class Hotel {
         return extraBedPrice;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
 }

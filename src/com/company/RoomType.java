@@ -2,12 +2,13 @@ package com.company;
 
 public class RoomType {
     private int id;
-    private String roomType;
+    private RoomTitle roomTitle;
     private double roomPrice;
 
-    public RoomType(int id, String roomType, double roomPrice) {
+    public RoomType(int id, RoomTitle roomTitle, double roomPrice) {
+
         this.id = id;
-        this.roomType = roomType;
+        this.roomTitle = roomTitle;
         this.roomPrice = roomPrice;
     }
 
@@ -15,8 +16,12 @@ public class RoomType {
         this.id = id;
     }
 
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
+    public RoomTitle getRoomTitle() {
+        return roomTitle;
+    }
+
+    public void setRoomTitle(RoomTitle roomTitle) {
+        this.roomTitle = roomTitle;
     }
 
     public void setRoomPrice(double roomPrice) {
@@ -27,9 +32,6 @@ public class RoomType {
         return id;
     }
 
-    public String getRoomType() {
-        return roomType;
-    }
 
     public double getRoomPrice() {
         return roomPrice;
@@ -37,3 +39,5 @@ public class RoomType {
 
 
 }
+
+
