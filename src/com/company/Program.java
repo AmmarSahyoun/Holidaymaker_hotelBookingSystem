@@ -236,7 +236,7 @@ public class Program {
             sqlStat = sqlStat + " and entertainment = 1";
         }
 
-        sqlStat = sqlStat + " Order By HotelName, RoomNr";
+        sqlStat = sqlStat + " Order By roomPrice, reviewStars";
 
         try {
             statement = conn.prepareStatement(sqlStat);
@@ -251,16 +251,18 @@ public class Program {
         try {
             while (resultSet.next()) {
 
-                String row = "id: " + resultSet.getInt("RoomID")
+                String row = "Room Id: " + resultSet.getInt("RoomID")
                         + ", Hotel Name: " + resultSet.getString("HotelName")
-                        + ", Room Number: " + resultSet.getString("RoomNr")
+                        + ", Hotel review: " + resultSet.getString("reviewStars")
+                        //           + ", Room No: " + resultSet.getString("Roomnr")
+                        + ", hotel room price: " + resultSet.getString("roomPrice")
                         + ", Room Type: " + resultSet.getString("RoomType")
                         + ", hotel distance: " + resultSet.getString("distance")
                         + ", hotel pool: " + resultSet.getString("pool")
                         + ", hotel restaurant: " + resultSet.getString("restaurant")
                         + ", hotel childrenActivities: " + resultSet.getString("childrenActivities")
-                        + ", hotel entertainment: " + resultSet.getString("entertainment")
-                        + ", hotel room price: " + resultSet.getString("roomPrice");
+                        + ", hotel entertainment: " + resultSet.getString("entertainment");
+
 
                 System.out.println(row);
             }
@@ -273,7 +275,16 @@ public class Program {
     public void changeBooking() {
         int guestId = 0;
         System.out.println("enter a guest id:");
-        guestId = scn.nextInt();
+        try {
+            guestId = scn.nextInt();
+        } catch (NumberFormatException ex) {
+            System.err.println("Choose a valid number");
+            new Program();
+        } catch (Exception e) {
+            System.out.println("Not a valid number!!");
+            return;
+        }
+
         try {
             statement = conn.prepareStatement("select * from allbooking_view \n" +
                     "\tInner Join Guest on (Guest.id = allbooking_view.guestID)\n" +
@@ -281,14 +292,13 @@ public class Program {
             statement.setString(1, String.valueOf(guestId));
 
             resultSet = statement.executeQuery();
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
 
             e.printStackTrace();
         }
         try {
             while (resultSet.next()) {
-                String row = " Id: " + resultSet.getString("id")
+                String row = " guestId: " + resultSet.getString("id")
                         + ", Name: " + resultSet.getString("guestName")
                         + ", booking id: " + resultSet.getString("bookingId")
                         + ", check-in: " + resultSet.getString("checkIn")
@@ -299,33 +309,71 @@ public class Program {
                         + ", room Id: " + resultSet.getString("roomId")
                         + ", room type: " + resultSet.getString("roomType")
                         + ", room price: " + resultSet.getString("roomPrice");
-
                 System.out.println(row);
                 System.out.println();
-            }
-        } catch (
-                Exception ex) {
-            ex.printStackTrace();
-        }
-        System.out.println("[1]Change booking's meals   [2]Add/remove extra bed    [3]Cancel the booking   [4]Back to main menu");
-        try {
-            choice = scn.nextInt();
-        } catch (NumberFormatException ex) {
-            System.err.println("Choose a valid number");
-            return;
-        } catch (Exception e) {
-            System.out.println("Not a valid number!!");
-            return;
-        }
-        if (choice == 1) {
-            // changeMeals();
-        }
-        if (choice == 2) {
-            //  changeExtraBed();
-        }
-        if (choice == 3) {
 
+                Date guestCheckIn = Date.valueOf(resultSet.getString("checkIn"));
+                Date guestCheckOut = Date.valueOf(resultSet.getString("checkOut"));
+                System.out.println("Choose NEW hotel facilities:");
+                System.out.println("[1] With pool  [0] Without pool");
+                Scanner scnn = new Scanner(System.in);
+                boolean pool = Boolean.parseBoolean(scnn.nextLine());
+                System.out.println("[1] With restaurant  [0] Without restaurant");
+                boolean restaurant = Boolean.parseBoolean(scnn.nextLine());
+                System.out.println("[1] With children activities  [0] Without children activities");
+                boolean childrenActivities = Boolean.parseBoolean(scnn.nextLine());
+                System.out.println("[1] With entertainment  [0] Without entertainment");
+                boolean entertainment = Boolean.parseBoolean(scnn.nextLine());
+                int guestBookingId = Integer.parseInt(resultSet.getString("bookingId"));
+                System.out.println("       List of available rooms sorted by Price and review:");
+                searchForRoom(guestCheckIn, guestCheckOut, pool, restaurant, childrenActivities, entertainment);
+                System.out.println("Choose a room ID to change your booking:");
+                int roomID = scnn.nextInt();
+
+                System.out.println("Do you need extra bed (Y/n)?");
+
+                scn = new Scanner(System.in);
+                String result = scn.nextLine();
+                boolean extraBed = (result.equalsIgnoreCase("y") ? true : false);
+
+                scn = new Scanner(System.in);
+                System.out.println("Full board or Half board meal (full/half)?");
+                String mealBoard = scn.nextLine();
+
+                if (mealBoard.equalsIgnoreCase("full")) {
+                    mealBoard = "fullBoard";
+                } else {
+                    mealBoard = "halfBoard";
+                }
+
+                statement = conn.prepareStatement("update holidaymaker.booking_x_rooms set meals=?, extraBed=?, rooms_id=? where booking_id like ?");
+                statement.setString(1, mealBoard);
+                statement.setBoolean(2, extraBed);
+                statement.setInt(3, roomID);
+                statement.setInt(4, guestBookingId);
+
+                int i = statement.executeUpdate();
+
+                if (i != 0) {
+                    System.out.println("The booking has Changed SUCCESSFULLY");
+
+                    try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            guestBookingId = generatedKeys.getInt(1);
+                        } else {
+                            throw new SQLException("Operation failed!");
+                        }
+                    }
+                }
+            }
+
+        } catch (NumberFormatException ex) {
+            new Program();
+        } catch (Exception e) {
+            System.out.println();
+            return;
         }
+
 
     }
 
@@ -344,20 +392,22 @@ public class Program {
         }
         try {
             while (resultSet.next()) {
-                String row = "id: " + resultSet.getString("id")
+                String row = "Guest id: " + resultSet.getString("id")
                         + ", guest name: " + resultSet.getString("guestName")
                         + ", guestAddress: " + resultSet.getString("guestAddress")
                         + ", guestEmail: " + resultSet.getString("guestEmail")
                         + ", guestMobile: " + resultSet.getString("guestMobile") + ".";
 
+                if (!cusName.equalsIgnoreCase(resultSet.getString("guestName"))) {
+                    System.out.println("customer are not registered");
+                }
                 System.out.println(row);
+
             }
         } catch (
                 Exception ex) {
             ex.printStackTrace();
         }
-        System.out.println("customer already registered");
     }
-
 }
 
