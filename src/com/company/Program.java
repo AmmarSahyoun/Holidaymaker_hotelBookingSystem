@@ -29,7 +29,7 @@ public class Program {
             System.out.println("[0] Exit");
 
             try {
-                conn = DriverManager.getConnection("jdbc:mysql://localhost/holidaymaker?user=root&password=lIgammoury16R&serverTimezone=UTC");
+                conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/holidaymaker?user=root&password=lIgammoury16R&serverTimezone=UTC");
             } catch (
                     Exception ex) {
                 ex.printStackTrace();
@@ -142,6 +142,7 @@ public class Program {
 
             int i = statement.executeUpdate();
 
+
             if (i != 0) {
                 System.out.println("Booking SUCCESS");
 
@@ -177,7 +178,7 @@ public class Program {
     }
 
     public int registerNewCustomer() {
-        int guestID = Integer.parseInt(null);
+        int guestID = 0;
 
         System.out.println("Enter customer's full name:");
         String cusName = scn.nextLine();
@@ -312,6 +313,10 @@ public class Program {
                 System.out.println(row);
                 System.out.println();
 
+                System.out.println("Enter Your Booking ID:");
+                int guestBookingId = scn.nextInt();
+
+
                 Date guestCheckIn = Date.valueOf(resultSet.getString("checkIn"));
                 Date guestCheckOut = Date.valueOf(resultSet.getString("checkOut"));
                 System.out.println("Choose NEW hotel facilities:");
@@ -324,7 +329,7 @@ public class Program {
                 boolean childrenActivities = Boolean.parseBoolean(scnn.nextLine());
                 System.out.println("[1] With entertainment  [0] Without entertainment");
                 boolean entertainment = Boolean.parseBoolean(scnn.nextLine());
-                int guestBookingId = Integer.parseInt(resultSet.getString("bookingId"));
+
                 System.out.println("       List of available rooms sorted by Price and review:");
                 searchForRoom(guestCheckIn, guestCheckOut, pool, restaurant, childrenActivities, entertainment);
                 System.out.println("Choose a room ID to change your booking:");
@@ -365,8 +370,8 @@ public class Program {
                         }
                     }
                 }
-            }
 
+            }
         } catch (NumberFormatException ex) {
             new Program();
         } catch (Exception e) {
