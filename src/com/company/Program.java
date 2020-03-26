@@ -25,7 +25,8 @@ public class Program {
             System.out.println("[1] Register a new customer ");
             System.out.println("[2] Search for available room and Book");
             System.out.println("[3] Change a booking");
-            System.out.println("[4] Search for a customer info");
+            System.out.println("[4] Delete a booking");
+            System.out.println("[5] Search for a customer info");
             System.out.println("[0] Exit");
 
             try {
@@ -118,8 +119,11 @@ public class Program {
             if (choice == 3) {
                 changeBooking();
             }
-
             if (choice == 4) {
+               deleteBooking();
+            }
+
+            if (choice == 5) {
                 searchForCustomer();
             }
 
@@ -413,6 +417,10 @@ public class Program {
                 Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void deleteBooking(){
+
     }
 }
 
